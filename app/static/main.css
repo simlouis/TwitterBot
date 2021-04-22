@@ -1,0 +1,47 @@
+:root{
+    --angle: -45;
+    --color1: rgb(29 161 242);
+    --color2: rgb(20 23 26);
+	--testblack: #292F33;
+	--color3: rgb(245 248 250);
+    --stop: 25;
+}
+
+body{
+    background-image: linear-gradient(calc(var(--angle) * 1deg), var(--color1) calc(var(--stop) * 1%), var(--color2) calc(var(--stop) * 1%)););
+    overflow: hidden;
+}
+.container {
+	display: inline-block;
+	vertical-align: top;
+	width: 1022px;
+	height: 500px;
+}
+
+#logo {
+	display: block;
+	width: 200px;
+	margin-top: 5%;
+	margin-left: 45%;
+}
+
+#tweet {
+	padding: 4px 10px;
+	border-radius: 4px;
+	width: 400px;
+	outline: transparent;
+	display: block;
+	height: 30px;
+	margin-top: 5%;
+	margin-bottom: 5%;
+	margin-left: 34%;
+}
+
+#graph {
+	padding: 20px 62px;
+	margin-left: 47%;
+	background-color: var(--color1);
+	border-color: transparent;
+	margin-top: 2.5%;
+	border-radius: 8px;
+}

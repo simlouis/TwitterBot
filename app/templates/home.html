@@ -9,7 +9,7 @@
 
     <script>
         function pageRedirect() {
-         window.location.href = "{{ url_for('graph') }}";
+         window.location.href = "{{ url_for('graph_input') }}";
         }
     </script>
 
@@ -18,7 +18,7 @@
     <div class="container">
         <img src="{{ url_for('static', filename='logo.png') }}" alt="logo" id="logo">
         <form method="POST">
-            <input type="text" id="tweet" name="tweet" placeholder="Tweet Here">
+            <input type="text" id="tweet" name="tweet" size="280" placeholder="Tweet Here">
             <button type="button" id="button" onclick="pageRedirect()">Graph</button>
         </form>
     </div>

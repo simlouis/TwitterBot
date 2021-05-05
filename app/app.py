@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, flash, url_for
 import json
 from flask_tweepy import Tweepy
 import tweepy
+import matplotlib.pyplot as plt
 
 app = Flask(__name__)
 app.config.setdefault('TWEEPY_CONSUMER_KEY', 'SERTs8Erl7WuDgtulnQHHfuIW')
@@ -20,6 +21,7 @@ def home():
         if len(str(request.form.get('tweet'))) > 280:
             # Add a popup that says too many characters
             # Change this render_template
+            # flash("Too many characters in the tweet. Please use less than 280", category=str)
             return render_template('homeTooManyChars.html')
         else:
             tweep.api.update_status(request.form.get('tweet'))
@@ -31,16 +33,16 @@ def home():
 
 
 @app.route("/Graph Input", methods=["GET", "POST"])
-def graph():
+def graph_input():
     if request.method == "POST":
         if len(str(request.form.get('tweet'))) > 280:
             return render_template('graph.html')
         else:
-            query = request.form.get('identifier')
+            query = request.form.get("tweet")
             func(str(query))
-            render_template('map.html')
-
-    return render_template('graph.html')
+            return render_template("map.html")
+    else:
+        return render_template('graph.html')
 
 
 # @app.route("/Graph", methods=["GET", "POST"])
@@ -82,13 +84,19 @@ def func(query):
 
     finalList = []
 
-
     for i in range(len(csvpd)):
         for j in range(len(location)):
             if csvpd[i] == (location[j]):
                 finalList.append(location[j])
 
-    print(finalList)
+    # Dictionary to be graphed
+    count = {i: finalList.count(i) for i in finalList}
+
+    # plt.bar(range(len(count)), list(count.values()), align='center')
+    # plt.xticks(range(len(count)), list(count.keys()))
+    plt.pie(list(count.values()), labels=list(count.keys()))
+    plt.savefig("static/graph.png")
+    plt.show()
 
 
 app.run()

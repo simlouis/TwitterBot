@@ -11,7 +11,9 @@
     <div class="input-container">
         <img src="{{ url_for('static', filename='logo.png') }}" alt="logo" id="logo">
         <form method="POST">
-            <input type="text" id="tweet" name = "tweet" size="280" placeholder="Enter query to be graphed">
+            <input type="text" id="tweet" name="tweet" size="280" placeholder="Enter query to be graphed">
+            <button type="submit" id="pie" name="graph" value="pie">Pie Graph</button>
+            <button type="submit" id="bar" name="graph" value="bar">Bar Graph</button>
         </form>
     </div>
 </body>

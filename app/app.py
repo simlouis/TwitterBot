@@ -24,6 +24,7 @@ def home():
             # flash("Too many characters in the tweet. Please use less than 280", category=str)
             return render_template('homeTooManyChars.html')
         else:
+            # TODO: SEND TO SQL SERVER ON PI
             tweep.api.update_status(request.form.get('tweet'))
 
         return render_template('home.html')
@@ -37,20 +38,21 @@ def graph_input():
     if request.method == "POST":
         if len(str(request.form.get('tweet'))) > 280:
             return render_template('graph.html')
-        else:
+        elif request.form['graph'] == 'pie':
             query = request.form.get("tweet")
-            func(str(query))
-            return render_template("map.html")
+            func(query, 1)
+            return render_template('pie.html')
+        elif request.form['graph'] == 'bar':
+            query = request.form.get("tweet")
+            func(query, 2)
+            return render_template('bar.html')
+        else:
+            return render_template('graph.html')
     else:
         return render_template('graph.html')
 
 
-# @app.route("/Graph", methods=["GET", "POST"])
-# def graph_it():
-#     return render_template("map.html")
-
-
-def func(query):
+def func(query, command):
     # Create api object
     consumer_token = "SERTs8Erl7WuDgtulnQHHfuIW"
     consumer_token_secret = "Xf7YZXbQakJnZl2hTJeoyLj2B4dFAibNEVe7EFYXRFcYj00MD7"
@@ -92,11 +94,19 @@ def func(query):
     # Dictionary to be graphed
     count = {i: finalList.count(i) for i in finalList}
 
-    # plt.bar(range(len(count)), list(count.values()), align='center')
-    # plt.xticks(range(len(count)), list(count.keys()))
-    plt.pie(list(count.values()), labels=list(count.keys()))
-    plt.savefig("static/graph.png")
-    plt.show()
+    if command == 1:
+        plt.pie(list(count.values()), labels=list(count.keys()), autopct='%.1f%%', textprops={'color': "w"})
+        plt.savefig("static/piegraph.png", transparent=True)
+        plt.close()
+    if command == 2:
+        # TODO: MAKE BAR GRAPH LOOK BETTER
+        plt.bar(range(len(count)), list(count.values()), align='center')
+        plt.xticks(range(len(count)), list(count.keys()), color='white', rotation='vertical')
+        plt.subplots_adjust(bottom=0.27)
+        plt.yticks(color='white')
+        plt.savefig("static/bargraph.png", transparent=True)
+        plt.close()
+
 
 
 app.run()

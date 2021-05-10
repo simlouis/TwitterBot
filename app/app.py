@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request, redirect, flash, url_for
-import json
 from flask_tweepy import Tweepy
 import tweepy
 import matplotlib.pyplot as plt
+import os
 
 app = Flask(__name__)
 app.config.setdefault('TWEEPY_CONSUMER_KEY', 'SERTs8Erl7WuDgtulnQHHfuIW')
@@ -12,7 +12,8 @@ app.config.setdefault('TWEEPY_ACCESS_TOKEN_SECRET', '5RjBnZdg9ntSPujciM0RJXFXS0k
 app.secret_key = b'GnyCJPpjC/FNbHO'
 
 tweep = Tweepy(app)
-
+bar_temp = 0
+pie_temp = 0
 
 @app.route("/", methods=["GET", "POST"])
 def home():
@@ -39,13 +40,14 @@ def graph_input():
         if len(str(request.form.get('tweet'))) > 280:
             return render_template('graph.html')
         elif request.form['graph'] == 'pie':
+            # TODO: CLEAR CACHE ON RELOAD OR SAME PICTURE WILL DISPLAY OR CHANGE FILE NAME
             query = request.form.get("tweet")
-            func(query, 1)
-            return render_template('pie.html')
+            graph_name = func(query, 1)
+            return render_template('pie.html', url=graph_name)
         elif request.form['graph'] == 'bar':
             query = request.form.get("tweet")
-            func(query, 2)
-            return render_template('bar.html')
+            graph_name = func(query, 2)
+            return render_template('bar.html', url=graph_name)
         else:
             return render_template('graph.html')
     else:
@@ -93,20 +95,24 @@ def func(query, command):
 
     # Dictionary to be graphed
     count = {i: finalList.count(i) for i in finalList}
-
+    global pie_temp
+    global bar_temp
     if command == 1:
+        pie_temp += 1
         plt.pie(list(count.values()), labels=list(count.keys()), autopct='%.1f%%', textprops={'color': "w"})
-        plt.savefig("static/piegraph.png", transparent=True)
+        plt.savefig("static/piegraph" + str(pie_temp) + ".png", transparent=True)
         plt.close()
+        return "piegraph" + str(pie_temp) + ".png"
+
     if command == 2:
-        # TODO: MAKE BAR GRAPH LOOK BETTER
+        bar_temp += 1
         plt.bar(range(len(count)), list(count.values()), align='center')
         plt.xticks(range(len(count)), list(count.keys()), color='white', rotation='vertical')
         plt.subplots_adjust(bottom=0.27)
         plt.yticks(color='white')
-        plt.savefig("static/bargraph.png", transparent=True)
+        plt.savefig("static/bargraph" + str(bar_temp) + ".png", transparent=True)
         plt.close()
-
+        return "bargraph" + str(bar_temp) + ".png"
 
 
 app.run()

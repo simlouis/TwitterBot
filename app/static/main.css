@@ -11,6 +11,11 @@ body{
     background-image: linear-gradient(calc(var(--angle) * 1deg), var(--color1) calc(var(--stop) * 1%), var(--color2) calc(var(--stop) * 1%)););
     overflow: hidden;
 }
+
+.InputBody{
+	background-image: linear-gradient(calc(var(--angle) * 1deg), var(--color1) calc(17 * 1%), var(--color2) calc(17 * 1%)););
+    overflow: hidden;
+}
 .container {
 	display: inline-block;
 	vertical-align: top;
@@ -66,4 +71,22 @@ body{
 	margin-left: auto;
 	margin-right: auto;
 	width: 75%;
+}
+
+#pie {
+	padding: 20px 62px;
+	margin-left: 47%;
+	background-color: var(--color1);
+	border-color: transparent;
+	margin-top: 2.5%;
+	border-radius: 8px;
+}
+
+#bar {
+	padding: 20px 62px;
+	margin-left: 47%;
+	background-color: var(--color1);
+	border-color: transparent;
+	margin-top: 2.5%;
+	border-radius: 8px;
 }

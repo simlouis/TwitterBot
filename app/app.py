@@ -2,7 +2,8 @@ from flask import Flask, render_template, request, redirect, flash, url_for
 from flask_tweepy import Tweepy
 import tweepy
 import matplotlib.pyplot as plt
-import os
+import sqlite3
+from sqlite3 import *
 
 app = Flask(__name__)
 app.config.setdefault('TWEEPY_CONSUMER_KEY', 'SERTs8Erl7WuDgtulnQHHfuIW')
@@ -12,11 +13,22 @@ app.config.setdefault('TWEEPY_ACCESS_TOKEN_SECRET', '5RjBnZdg9ntSPujciM0RJXFXS0k
 app.secret_key = b'GnyCJPpjC/FNbHO'
 
 tweep = Tweepy(app)
-bar_temp = 0
-pie_temp = 0
+bar_temp = 1
+pie_temp = 1
+
 
 @app.route("/", methods=["GET", "POST"])
 def home():
+    conn = create_database("/home/pi/CS121/app/app.sqlite")
+    create_table_sql = """CREATE TABLE IF NOT EXISTS Tweet(
+                                tweet text PRIMARY KEY
+                                )
+                               """
+    if conn is not None:
+        create_table(conn, create_table_sql)
+    else:
+        print("Error")
+
     if request.method == "POST":
 
         if len(str(request.form.get('tweet'))) > 280:
@@ -25,7 +37,7 @@ def home():
             # flash("Too many characters in the tweet. Please use less than 280", category=str)
             return render_template('homeTooManyChars.html')
         else:
-            # TODO: SEND TO SQL SERVER ON PI
+            add_tweet(conn, (request.form.get('tweet'), ))
             tweep.api.update_status(request.form.get('tweet'))
 
         return render_template('home.html')
@@ -40,7 +52,6 @@ def graph_input():
         if len(str(request.form.get('tweet'))) > 280:
             return render_template('graph.html')
         elif request.form['graph'] == 'pie':
-            # TODO: CLEAR CACHE ON RELOAD OR SAME PICTURE WILL DISPLAY OR CHANGE FILE NAME
             query = request.form.get("tweet")
             graph_name = func(query, 1)
             return render_template('pie.html', url=graph_name)
@@ -52,6 +63,33 @@ def graph_input():
             return render_template('graph.html')
     else:
         return render_template('graph.html')
+
+
+def create_database(path):
+    connection = None
+    try:
+        connection = sqlite3.connect(path)
+        print("Connected")
+    except Error as e:
+        print(f"Error '{e}' occurred")
+
+    return connection
+
+
+def create_table(connection, sql):
+    try:
+        conn = connection.cursor()
+        conn.execute(sql)
+    except Error as e:
+        print(f"Error '{e}' occurred")
+
+
+def add_tweet(connection, vals):
+    sql = """INSERT INTO Tweet(tweet)
+            VALUES(?)"""
+    conn = connection.cursor()
+    conn.execute(sql, vals)
+    connection.commit()
 
 
 def func(query, command):
